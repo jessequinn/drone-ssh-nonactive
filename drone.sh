@@ -12,18 +12,26 @@ else
   DEFAULT_PORT=$PLUGIN_PORT
 fi
 
-if [ -z "$PLUGIN_USER" ]; then
-  echo "No user specified, using root!"
-  USER="root"
+if [ -z "$RSYNC_USER" ]; then
+  if [ -z "$PLUGIN_USER" ]; then
+    echo "No user specified, using root!"
+    USER="root"
+  else
+    USER=$PLUGIN_USER
+  fi
 else
-  USER=$PLUGIN_USER
+  USER=$RSYNC_USER
 fi
 
-if [ -z "$PLUGIN_KEY" ]; then
-  echo "No private key specified!"
-  exit 1
+if [ -z "$RSYNC_KEY" ]; then
+  if [ -z "$PLUGIN_KEY" ]; then
+    echo "No private key specified!"
+      exit 1
+    else
+      SSH_KEY=$PLUGIN_KEY
+    fi
 else
-  SSH_KEY=$PLUGIN_KEY
+  SSH_KEY=$RSYNC_KEY
 fi
 
 # Prepare SSH
