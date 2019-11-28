@@ -49,15 +49,15 @@ fi
 echo "$SSH_KEY" > $keyfile
 chmod 0600 $keyfile
 
-# Parse SSH commands
 function join_with { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
+# Parse SSH commands
 IFS=','; read -ra COMMANDS <<< "$PLUGIN_SCRIPT"
 prescript=$(join_with ' && ' "${COMMANDS[@]}")
-
 # Run ssh
 IFS=','; read -ra HOSTS <<< "$PLUGIN_HOSTS"
 IFS=','; read -ra PORTS <<< "$PLUGIN_PORTS"
 result=0
+
 for ((i=0; i < ${#HOSTS[@]}; i++))
 do
   HOST=${HOSTS[$i]}
