@@ -79,7 +79,7 @@ do
     if [ -n "$PLUGIN_SCRIPT" ]; then
         echo $(printf "%s" "$ ssh -p $PORT $USER@$HOST ...")
         echo $(printf "%s" " > $prescript ...")
-        eval "ssh -p $PORT $USER@$HOST '$prescript'"
+        eval "ssh -o "ServerAliveInterval 60" -p $PORT $USER@$HOST '$prescript'"
         result=$(($result+$?))
         echo $(printf "%s" "$ ssh -p $PORT $USER@$HOST result: $?")
         if [ "$result" -gt "0" ]; then exit $result; fi
