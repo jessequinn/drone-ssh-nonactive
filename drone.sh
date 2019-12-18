@@ -38,6 +38,8 @@ fi
 home="/root"
 mkdir -p "$home/.ssh"
 printf "StrictHostKeyChecking no\n" > "$home/.ssh/config"
+printf "ServerAliveInterval 30\n" > "$home/.ssh/config"
+printf "SServerAliveCountMax 120\n" > "$home/.ssh/config"
 chmod 0700 "$home/.ssh/config"
 keyfile="$home/.ssh/id_rsa"
 echo "$SSH_KEY" | grep -q "ssh-ed25519"
@@ -60,7 +62,7 @@ chmod 0600 $keyfile
 function join_with { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
 # Parse SSH commands
 IFS=','; read -ra COMMANDS <<< "$PLUGIN_SCRIPT"
-prescript=$(join_with ' && ' "${COMMANDS[@]}")
+script=$(join_with ' && ' "${COMMANDS[@]}")
 # Run ssh
 IFS=','; read -ra HOSTS <<< "$PLUGIN_HOSTS"
 IFS=','; read -ra PORTS <<< "$PLUGIN_PORTS"
@@ -78,8 +80,8 @@ do
 
     if [ -n "$PLUGIN_SCRIPT" ]; then
         echo $(printf "%s" "$ ssh -p $PORT $USER@$HOST ...")
-        echo $(printf "%s" " > $prescript ...")
-        eval "ssh -o 'ServerAliveInterval 60' -o 'ServerAliveCountMax 120' -p $PORT $USER@$HOST '$prescript'"
+        echo $(printf "%s" " > $script ...")
+        eval "ssh -p $PORT $USER@$HOST '$script'"
         result=$(($result+$?))
         echo $(printf "%s" "$ ssh -p $PORT $USER@$HOST result: $?")
         if [ "$result" -gt "0" ]; then exit $result; fi
